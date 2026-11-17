@@ -32,18 +32,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Montserrat:wght@300;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #08080a;
-            --text-main: #e0e0e0;
-            --accent: #d4cfc7;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Montserrat', sans-serif;
+            --bg-deep: #040714;
+            --bg-mid: #0a1438;
+            --cyber-cyan: #00f0ff;
+            --cyber-blue: #2962ff;
+            --cyber-pink: #ff2a85;
+            --cyber-lime: #ccff00;
+            --chrome-light: #ffffff;
+            --chrome-silver: #b9c9e0;
+            --chrome-dark: #253452;
+            --win-bg: rgba(11, 21, 54, 0.85);
+            --font-display: 'Orbitron', sans-serif;
+            --font-pixel: 'Silkscreen', monospace;
+            --font-mono: 'Space Mono', monospace;
         }
 
         * {
@@ -51,28 +57,182 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-sans);
+            background: radial-gradient(circle at 50% 42%, #11245e 0%, #060b21 55%, #02030a 100%);
+            color: #e8f4ff;
+            font-family: var(--font-mono);
             margin: 0;
             height: 100vh;
             overflow: hidden;
             position: relative;
+            cursor: crosshair;
         }
 
-        .nebula {
+        /* CRT Scanlines Overlay */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 0px,
+                rgba(255, 255, 255, 0) 2px,
+                rgba(0, 10, 30, 0.28) 3px,
+                rgba(0, 10, 30, 0.28) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Y2K Perspective Grid */
+        .y2k-grid {
+            position: absolute;
+            bottom: -15%;
+            left: -50%;
+            width: 200%;
+            height: 72%;
+            background-image:
+                linear-gradient(to right, rgba(0, 240, 255, 0.28) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.28) 1px, transparent 1px);
+            background-size: 48px 48px;
+            transform: perspective(380px) rotateX(68deg);
+            animation: gridScroll 6s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 15%, transparent 95%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 15%, transparent 95%);
+        }
+
+        @keyframes gridScroll {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 48px;
+            }
+        }
+
+        /* Cyber Glow & Orbital Rings */
+        .cyber-core {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 80vw;
-            height: 80vh;
-            background: radial-gradient(circle, rgba(50, 60, 80, 0.2), transparent 70%);
+            width: 520px;
+            height: 520px;
             transform: translate(-50%, -50%);
-            z-index: 0;
             pointer-events: none;
-            filter: blur(50px);
+            z-index: 0;
         }
 
+        .cyber-core::before {
+            content: "";
+            position: absolute;
+            inset: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.18) 0%, rgba(41, 98, 255, 0.08) 45%, transparent 70%);
+            filter: blur(20px);
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 460px;
+            height: 460px;
+            border: 1px dashed rgba(0, 240, 255, 0.35);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(72deg) rotateY(-14deg);
+            animation: spinRing 18s linear infinite;
+        }
+
+        .orbit-ring.ring-2 {
+            width: 540px;
+            height: 540px;
+            border: 1px solid rgba(255, 42, 133, 0.25);
+            transform: translate(-50%, -50%) rotateX(72deg) rotateY(18deg);
+            animation: spinRingReverse 24s linear infinite;
+        }
+
+        @keyframes spinRing {
+            from {
+                transform: translate(-50%, -50%) rotateX(72deg) rotateY(-14deg) rotateZ(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotateX(72deg) rotateY(-14deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes spinRingReverse {
+            from {
+                transform: translate(-50%, -50%) rotateX(72deg) rotateY(18deg) rotateZ(360deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotateX(72deg) rotateY(18deg) rotateZ(0deg);
+            }
+        }
+
+        /* Top Y2K System Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 28px;
+            background: linear-gradient(180deg, #2d4c8e 0%, #101d42 50%, #091129 100%);
+            border-bottom: 2px solid var(--cyber-cyan);
+            box-shadow: 0 2px 12px rgba(0, 240, 255, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-family: var(--font-pixel);
+            font-size: 0.7rem;
+            color: #ffffff;
+            z-index: 2000;
+            user-select: none;
+        }
+
+        .top-badge {
+            background: var(--cyber-lime);
+            color: #040714;
+            padding: 2px 6px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #668000;
+            white-space: nowrap;
+        }
+
+        .ticker-wrap {
+            flex: 1;
+            overflow: hidden;
+            margin: 0 16px;
+            white-space: nowrap;
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 6px rgba(0, 240, 255, 0.7);
+        }
+
+        .ticker-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 22s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .sys-clock {
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            padding: 2px 8px;
+            white-space: nowrap;
+        }
+
+        /* Center Chrome Hub */
         .center-hub {
             position: absolute;
             top: 50%;
@@ -84,29 +244,58 @@
             user-select: none;
         }
 
+        .y2k-sparkles {
+            font-family: var(--font-pixel);
+            font-size: 0.85rem;
+            color: var(--cyber-lime);
+            letter-spacing: 0.4em;
+            text-shadow: 0 0 10px rgba(204, 255, 0, 0.8);
+            margin-bottom: 6px;
+        }
+
         .main-title {
-            font-family: var(--font-serif);
-            font-size: 5rem;
-            font-weight: 400;
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            font-style: italic;
             margin: 0;
-            color: rgba(255, 255, 255, 0.1);
-            letter-spacing: -0.03em;
-            transition: color 0.5s;
+            letter-spacing: 0.04em;
+            background: linear-gradient(
+                180deg,
+                #ffffff 0%,
+                #d6ecff 28%,
+                #47699e 49%,
+                #1b2b4d 52%,
+                #99d6ff 75%,
+                #ffffff 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter:
+                drop-shadow(0 0 2px #00f0ff)
+                drop-shadow(0 0 18px rgba(0, 240, 255, 0.55))
+                drop-shadow(4px 4px 0px #091330);
         }
 
         .subtitle {
-            font-family: var(--font-sans);
-            font-size: 0.8rem;
-            letter-spacing: 0.5em;
+            display: inline-block;
+            margin-top: 14px;
+            padding: 5px 18px;
+            font-family: var(--font-pixel);
+            font-size: 0.78rem;
+            letter-spacing: 0.25em;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 10px;
+            color: #040714;
+            background: linear-gradient(180deg, #ffffff 0%, #99e6ff 48%, #00c8ff 52%, #80f0ff 100%);
+            border: 1px solid #ffffff;
+            border-radius: 999px;
+            box-shadow:
+                0 0 15px rgba(0, 240, 255, 0.7),
+                inset 0 1px 1px #ffffff;
         }
 
-        body:hover .main-title {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
+        /* Floating Y2K Mini-Windows */
         .float-container {
             position: absolute;
             top: 0;
@@ -123,66 +312,179 @@
             text-decoration: none;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 25px;
-
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(4px);
-            border-radius: 2px;
-
+            min-width: 175px;
+            background: var(--win-bg);
+            border: 2px solid #9cc2ff;
+            border-radius: 4px;
+            box-shadow:
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #1e356b,
+                4px 4px 0px rgba(0, 240, 255, 0.35),
+                0 8px 20px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            overflow: hidden;
             transition:
-                background 0.3s,
-                border-color 0.3s,
-                transform 0.3s ease-out,
-                box-shadow 0.3s,
-                z-index 0s;
-
+                border-color 0.2s,
+                box-shadow 0.2s,
+                background 0.2s;
             cursor: pointer;
             will-change: transform;
         }
 
+        .win-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 6px;
+            background: linear-gradient(90deg, #163785 0%, #0095ff 60%, #70d6ff 100%);
+            border-bottom: 1px solid #9cc2ff;
+            font-family: var(--font-pixel);
+            font-size: 0.58rem;
+            color: #ffffff;
+            text-shadow: 1px 1px 0 #050c24;
+        }
+
+        .win-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .win-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 11px;
+            height: 11px;
+            background: #d8e4f8;
+            color: #060d24;
+            font-size: 8px;
+            line-height: 1;
+            font-weight: 700;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #4a608a;
+        }
+
+        .win-body {
+            padding: 12px 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
         .floater span.label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-main);
-            letter-spacing: 0.05em;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
 
         .floater span.sub {
             font-size: 0.7rem;
-            color: #888;
-            margin-top: 4px;
-            font-family: var(--font-serif);
-            font-style: italic;
+            color: var(--cyber-cyan);
+            margin-top: 5px;
+            font-family: var(--font-mono);
+        }
+
+        .floater span.sub::before {
+            content: "> ";
+            color: var(--cyber-lime);
         }
 
         .floater:hover {
-            background: rgba(20, 20, 20, 0.95);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            background: rgba(16, 8, 42, 0.96);
+            border-color: var(--cyber-lime);
+            box-shadow:
+                inset 1px 1px 0px #ffffff,
+                0 0 22px rgba(204, 255, 0, 0.75),
+                4px 4px 0px var(--cyber-pink);
             z-index: 1000 !important;
         }
 
+        .floater:hover .win-bar {
+            background: linear-gradient(90deg, #b8005c 0%, #ff2a85 65%, #ff99c8 100%);
+            border-bottom-color: var(--cyber-lime);
+        }
+
+        .floater:hover span.label {
+            color: var(--cyber-lime);
+            text-shadow: 0 0 10px rgba(204, 255, 0, 0.8);
+        }
+
+        /* Bottom Y2K Taskbar */
         .footer-fixed {
-            position: absolute;
-            bottom: 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            text-align: center;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.2);
+            height: 26px;
+            background: linear-gradient(180deg, #243d75 0%, #0d1736 100%);
+            border-top: 2px solid #8eb8ff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-family: var(--font-pixel);
+            font-size: 0.65rem;
+            color: #c2dbff;
             pointer-events: none;
-            z-index: 0;
+            z-index: 2000;
+        }
+
+        .start-pill {
+            background: linear-gradient(180deg, #d9ff66 0%, #88cc00 100%);
+            color: #050a14;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 3px;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #3d5c00;
+        }
+
+        .net-status {
+            color: var(--cyber-cyan);
+        }
+
+        @media (max-width: 600px) {
+            .floater {
+                min-width: 145px;
+            }
+            .win-body {
+                padding: 9px 12px 11px;
+            }
+            .floater span.label {
+                font-size: 0.82rem;
+            }
+            .footer-fixed .net-status {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="nebula"></div>
+    <div class="scanlines"></div>
+    <div class="y2k-grid"></div>
+
+    <div class="cyber-core">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring ring-2"></div>
+    </div>
+
+    <header class="top-bar">
+        <div class="top-badge">★ Y2K.OS</div>
+        <div class="ticker-wrap">
+            <div class="ticker-text">
+                /// WELCOME TO LORENZO'S CREATIVE HUB /// PROJECT ASTELTA ONLINE /// WORLD BUILDING • VISUAL ARTS • SOUNDTRACKS • CODE REPOSITORIES /// SYSTEM READY ///
+            </div>
+        </div>
+        <div class="sys-clock" id="clock">00:00:00</div>
+    </header>
 
     <div class="center-hub">
+        <div class="y2k-sparkles">✦ ✧ ★ ✧ ✦</div>
         <h1 class="main-title">Lorenzo</h1>
         <div class="subtitle">My links</div>
     </div>
@@ -190,57 +492,117 @@
     <div id="space" class="float-container">
 
         <a href="https://astelta.world" class="floater" target="_blank">
-            <span class="label">Astelta</span>
-            <span class="sub">World Building</span>
-        </a>
-
-        <a href="https://www.instagram.com/is_it_lori/" class="floater" target="_blank">
-            <span class="label">Instagram</span>
-            <span class="sub">Visual Arts</span>
+            <div class="win-bar">
+                <span>ASTELTA.SYS</span>
+                <div class="win-controls">
+                    <span class="win-btn">_</span>
+                    <span class="win-btn">□</span>
+                    <span class="win-btn">×</span>
+                </div>
+            </div>
+            <div class="win-body">
+                <span class="label">Astelta</span>
+                <span class="sub">World Building</span>
+            </div>
         </a>
 
         <a href="https://open.spotify.com/artist/2SfFVjOKYKHMYN2XBTYOl8?si=3E-7Xg5uSK6Eu2s7YP-q4Q" class="floater"
             target="_blank">
-            <span class="label">Spotify</span>
-            <span class="sub">Sounds</span>
+            <div class="win-bar">
+                <span>AUDIO.MP3</span>
+                <div class="win-controls">
+                    <span class="win-btn">_</span>
+                    <span class="win-btn">□</span>
+                    <span class="win-btn">×</span>
+                </div>
+            </div>
+            <div class="win-body">
+                <span class="label">Spotify</span>
+                <span class="sub">Sounds</span>
+            </div>
         </a>
 
         <a href="https://github.com/LoriV2" class="floater" target="_blank">
-            <span class="label">GitHub</span>
-            <span class="sub">Code & Repos</span>
+            <div class="win-bar">
+                <span>REPOS.SH</span>
+                <div class="win-controls">
+                    <span class="win-btn">_</span>
+                    <span class="win-btn">□</span>
+                    <span class="win-btn">×</span>
+                </div>
+            </div>
+            <div class="win-body">
+                <span class="label">GitHub</span>
+                <span class="sub">Code &amp; Repos</span>
+            </div>
         </a>
 
         <a href="https://discord.gg/YtMBzkSN5q" class="floater" target="_blank">
-            <span class="label">Discord</span>
-            <span class="sub">Community</span>
+            <div class="win-bar">
+                <span>CHAT_NET.IRC</span>
+                <div class="win-controls">
+                    <span class="win-btn">_</span>
+                    <span class="win-btn">□</span>
+                    <span class="win-btn">×</span>
+                </div>
+            </div>
+            <div class="win-body">
+                <span class="label">Discord</span>
+                <span class="sub">Community</span>
+            </div>
         </a>
 
         <a href="mailto:contact@astelta.world" class="floater">
-            <span class="label">Contact</span>
-            <span class="sub">Get in touch</span>
+            <div class="win-bar">
+                <span>UPLINK.DAT</span>
+                <div class="win-controls">
+                    <span class="win-btn">_</span>
+                    <span class="win-btn">□</span>
+                    <span class="win-btn">×</span>
+                </div>
+            </div>
+            <div class="win-body">
+                <span class="label">Contact</span>
+                <span class="sub">Get in touch</span>
+            </div>
         </a>
 
     </div>
 
-    <div class="footer-fixed">
-        &copy; <span id="year"></span> Just doing stuff.
-    </div>
+    <footer class="footer-fixed">
+        <span class="start-pill">❖ START</span>
+        <span>&copy; <span id="year"></span> Just doing stuff.</span>
+        <span class="net-status">[64MB OK // 1024x768]</span>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('year').textContent = new Date().getFullYear();
 
-            const space = document.getElementById('space');
-            const items = document.querySelectorAll('.floater');
+            const clockEl = document.getElementById('clock');
+            function updateClock() {
+                const now = new Date();
+                clockEl.textContent = now.toTimeString().split(' ')[0];
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
 
+            const items = document.querySelectorAll('.floater');
             const elements = [];
+            const topOffset = 34;
+            const bottomOffset = 32;
 
             items.forEach((item, index) => {
-                let x = Math.random() * (window.innerWidth - 150);
-                let y = Math.random() * (window.innerHeight - 100);
+                const w = item.offsetWidth;
+                const h = item.offsetHeight;
+                const maxX = Math.max(10, window.innerWidth - w - 10);
+                const maxY = Math.max(topOffset + 10, window.innerHeight - h - bottomOffset);
 
-                let vx = (Math.random() - 0.5) * 1.5;
-                let vy = (Math.random() - 0.5) * 1.5;
+                let x = Math.random() * maxX;
+                let y = topOffset + Math.random() * (maxY - topOffset);
+
+                let vx = (Math.random() < 0.5 ? -1 : 1) * (0.4 + Math.random() * 0.5);
+                let vy = (Math.random() < 0.5 ? -1 : 1) * (0.4 + Math.random() * 0.5);
 
                 elements.push({
                     el: item,
@@ -248,8 +610,8 @@
                     y: y,
                     vx: vx,
                     vy: vy,
-                    width: item.offsetWidth,
-                    height: item.offsetHeight,
+                    width: w,
+                    height: h,
                     isHovered: false
                 });
 
@@ -271,11 +633,20 @@
                         obj.x += obj.vx;
                         obj.y += obj.vy;
 
-                        if (obj.x <= 0 || obj.x + obj.width >= screenW) {
-                            obj.vx *= -1;
+                        if (obj.x <= 4) {
+                            obj.x = 4;
+                            obj.vx = Math.abs(obj.vx);
+                        } else if (obj.x + obj.width >= screenW - 4) {
+                            obj.x = screenW - obj.width - 4;
+                            obj.vx = -Math.abs(obj.vx);
                         }
-                        if (obj.y <= 0 || obj.y + obj.height >= screenH) {
-                            obj.vy *= -1;
+
+                        if (obj.y <= topOffset) {
+                            obj.y = topOffset;
+                            obj.vy = Math.abs(obj.vy);
+                        } else if (obj.y + obj.height >= screenH - bottomOffset) {
+                            obj.y = screenH - obj.height - bottomOffset;
+                            obj.vy = -Math.abs(obj.vy);
                         }
                     }
 
@@ -289,8 +660,10 @@
                 const screenW = window.innerWidth;
                 const screenH = window.innerHeight;
                 elements.forEach(obj => {
-                    if (obj.x + obj.width > screenW) obj.x = screenW - obj.width;
-                    if (obj.y + obj.height > screenH) obj.y = screenH - obj.height;
+                    obj.width = obj.el.offsetWidth;
+                    obj.height = obj.el.offsetHeight;
+                    if (obj.x + obj.width > screenW - 4) obj.x = Math.max(4, screenW - obj.width - 4);
+                    if (obj.y + obj.height > screenH - bottomOffset) obj.y = Math.max(topOffset, screenH - obj.height - bottomOffset);
                 });
             });
 
@@ -306,7 +679,6 @@
         "jobTitle": "World Builder & Developer",
         "sameAs": [
             "https://astelta.world",
-            "https://www.instagram.com/is_it_lori/",
             "https://github.com/LoriV2",
             "https://open.spotify.com/artist/2SfFVjOKYKHMYN2XBTYOl8?si=3E-7Xg5uSK6Eu2s7YP-q4Q"
         ],
